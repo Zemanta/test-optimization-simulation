@@ -9,12 +9,34 @@ from epsilon import RunEpsilonGreedy
 from thompson import RunThompsonSampling
 from plotting import plot_stacked_plots, plot_gain
 
-def z_calc(p1: float, p2: float, n1: int, n2: int):
+def z_calc(p1: float, p2: float, n1: int, n2: int) -> float:
+    """
+    Calculates the z value for the difference of two sample means.
+
+    Args:
+        p1: Mean of first sample.
+        p2: Mean of second sample.
+        n1: Sample size of the first sample.
+        n2: Sample size of the second sample.
+    Returns:
+        The calculated z value.
+    """
     p_star = (p1*n1 + p2*n2) / (n1 + n2)
     return (p2 - p1) / math.sqrt(p_star*(1 - p_star)*((1.0 / n1) + (1.0 / n2)))
 
 
-def sample_required(p1: float, p2: float, alpha: float=0.01):
+def sample_required(p1: float, p2: float, alpha: float=0.01) -> int:
+    """
+    Calculates the sample size needed to provide a test power of (1-alpha)
+    in which we are testing h0: p2-p1==0.
+
+    Args:
+        p1: Mean of first sample.
+        p2: Mean of second sample.
+        alpha: Type one error.
+    Returns:
+        The calculated sample size.
+    """
     n = 1
     while True:
         z = z_calc(p1, p2, n1=n, n2=n)
@@ -26,6 +48,16 @@ def sample_required(p1: float, p2: float, alpha: float=0.01):
 
 
 def closest_pair(bandits: List[float]) -> (float, float):
+    """
+    Finds the two bandits that have the closest average return
+    and returns their returns.
+
+    Args:
+        bandits: list of average bandit returns.
+    Returns:
+        The average return of the two bandits that are the most
+        similar.
+    """
     bandits.sort()
     min_diff = float("inf")
     p1 = -1
@@ -34,21 +66,59 @@ def closest_pair(bandits: List[float]) -> (float, float):
         if bandits[i+1] - bandits[i] < min_diff:
             p1 = bandits[i]
             p2 = bandits[i+1]
+            min_diff = p2 - p1
     return p1, p2
 
 
 def get_minimum_sample(bandits: List[float], alpha: float=0.01) -> int:
+    """
+    Gets the minimum sample size required to provide a test power of
+    (1-alpha/len(bandits)), this includes the p-value Bonferroni correction.
+
+    Args:
+        bandits: list of average bandit returns.
+        alpha: Type one error.
+    Returns:
+        Needed sample size.
+    """
     p1, p2 = closest_pair(bandits)
-    return sample_required(p1, p2, alpha)
+    return sample_required(p1, p2, alpha/len(bandits))
 
 
-def define_batches(examples_needed: int, batch_size: int):
+def get_number_batches(examples_needed: int, batch_size: int) -> int:
+    """
+    Gets the number of batches based on the number of needed examples
+    and provided batch size.
+
+    Args:
+        examples_needed: Total number of examples needed.
+        batch_size: Number of examples per batch.
+    Returns:
+        The number of batches.
+    """
     return math.ceil(examples_needed / batch_size)
 
 
-def simulate(bandits: List[float], alpha: float=0.001, batch_size: int=1000, simulations: int=1000, epsilon: float=0.1, sample_size: int=1000) -> (RunSplitTest, RunEpsilonGreedy, RunThompsonSampling):
+def simulate(bandits: List[float], alpha: float=0.001,
+             batch_size: int=5000, simulations: int=1000,
+             epsilon: float=0.1, sample_size: int=1000) ->
+             (RunSplitTest, RunEpsilonGreedy, RunThompsonSampling):
+    """
+    Runs simulations for split tests, Epsilon-greedy multi-armed bandits
+    and Thompson sampling based on the provided parameters.
+
+    Args:
+        bandits: list of average bandit returns.
+        alpha: Type one error.
+        batch_size: Number of examples per batch.
+        simulations: Number of simaltions per test type.
+        epsilon: percentage of exploration in epsilon-greedy MAB
+        sample_size: sample size per bandit for each Thompson sampling batch
+    Returns:
+        The classes for each type of test.
+    """
     examples_needed = get_minimum_sample(bandits, alpha)
-    batches = define_batches(examples_needed, batch_size)
+    batches = get_number_batches(examples_needed, batch_size)
 
     rst = RunSplitTest(bandits,
                        batch_size=batch_size,
@@ -75,7 +145,19 @@ def simulate(bandits: List[float], alpha: float=0.001, batch_size: int=1000, sim
     return rst, reg, rts
 
 
-def run_simulations(bandits: List[float], alpha: float=0.001, batch_size: int=1000, simulations: int=1000, epsilon: float=0.1, sample_size: int=1000):
+def run_simulations(bandits: List[float], alpha: float=0.001, batch_size: int=1000,
+                    simulations: int=1000, epsilon: float=0.1, sample_size: int=1000):
+    """
+    Starts the simulation process, gets the results and makes plots.
+
+    Args:
+        bandits: list of average bandit returns.
+        alpha: Type one error.
+        batch_size: Number of examples per batch.
+        simulations: Number of simaltions per test type.
+        epsilon: percentage of exploration in epsilon-greedy MAB
+        sample_size: sample size per bandit for each Thompson sampling batch
+    """
     rst, reg, rts = simulate(bandits=bandits,
                              alpha=alpha,
                              batch_size=batch_size,

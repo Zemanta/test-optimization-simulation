@@ -7,6 +7,15 @@ from thompson import RunThompsonSampling
 
 
 def stacked_plot(df: pd.DataFrame, title:str, x_label: str, y_label: str):
+    """
+    Plots a stacked area plot of the passed DataFrame.
+
+    Args:
+        df: DataFrame containing data to be plotted.
+        title: Title of the plot.
+        x_label: Title of the x-axis.
+        y_label: Title of the y-axis.
+    """
     stacked_data = df.apply(lambda x: x*100/sum(x), axis=1)
     stacked_data.plot(kind="area", stacked=True)
     plt.title(title)
@@ -15,6 +24,14 @@ def stacked_plot(df: pd.DataFrame, title:str, x_label: str, y_label: str):
 
 
 def plot_stacked_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSampling):
+    """
+    Plots a stacked area plots for each type of test.
+
+    Args:
+        rst: Split test simulation class.
+        reg: Epsilon-greedy MAB test simulation class.
+        rts: Thompson sampling test simulation class.
+    """
     stacked_plot(rst.df_bids,
              title='A/B Test Bandit Resources Allocation',
              x_label='Batch',
@@ -32,6 +49,14 @@ def plot_stacked_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompso
 
 
 def plot_gain(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSampling):
+    """
+    Plots the returns of each kind of test over the batches it ran.
+
+    Args:
+        rst: Split test simulation class.
+        reg: Epsilon-greedy MAB test simulation class.
+        rts: Thompson sampling test simulation class.
+    """
     rst_gain = rst.df_clicks.sum(axis=1)
     reg_gain = reg.df_clicks.sum(axis=1)
     rts_gain = rts.df_clicks.sum(axis=1)

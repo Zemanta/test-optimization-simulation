@@ -69,8 +69,8 @@ class RunThompsonSampling:
         self.batches = batches
         self.simulations = simulations
 
-        self.df_bids = pd.DataFrame(columns=self.bandits)
-        self.df_clicks = pd.DataFrame(columns=self.bandits)
+        self.df_bids = pd.DataFrame(columns=self.bandit_returns)
+        self.df_clicks = pd.DataFrame(columns=self.bandit_returns)
 
         if alpha_priors is None:
             alpha_priors = [1.] * self.n_bandits

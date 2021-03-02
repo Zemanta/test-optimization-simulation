@@ -16,8 +16,8 @@ class RunSplitTest:
         self.batches = batches
         self.simulations = simulations
 
-        self.df_bids = pd.DataFrame(columns=self.bandits)
-        self.df_clicks = pd.DataFrame(columns=self.bandits)
+        self.df_bids = pd.DataFrame(columns=self.bandit_returns)
+        self.df_clicks = pd.DataFrame(columns=self.bandit_returns)
  
     def init_bandits(self):
         self.bandit_positive_examples = [0] * self.n_bandits

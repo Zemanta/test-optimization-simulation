@@ -50,8 +50,8 @@ class RunEpsilonGreedy:
         self.batches = batches
         self.simulations = simulations
 
-        self.df_bids = pd.DataFrame(columns=self.bandits)
-        self.df_clicks = pd.DataFrame(columns=self.bandits)
+        self.df_bids = pd.DataFrame(columns=self.bandit_returns)
+        self.df_clicks = pd.DataFrame(columns=self.bandit_returns)
 
     def init_bandits(self):
         self.first_batch = True
