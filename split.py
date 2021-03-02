@@ -5,7 +5,31 @@ import pandas as pd
 
 
 class RunSplitTest:
+    """
+    Class that is used to run simulations of split tests.
+
+    Attributes:
+        bandit_returns: List of average returns per bandit.
+        batch_size: Number of examples per batch.
+        batches: Number of batches.
+        simulations: Number of simulations.
+    
+    Methods:
+        init_bandits: Prepares everything for new simulation.
+        run: Runs the simulations and tracks performance.
+    """
+
     def __init__(self, bandit_returns: List[float], batch_size: int=1000, batches: int=10, simulations: int=100):
+        """
+        Initializes a new RunSplitTest class with passed parameters.
+
+        Args:
+            bandit_returns: List of average returns per bandit.
+            batch_size: Number of examples per batch.
+            batches: Number of batches.
+            simulations: Number of simulations.
+        """
+
         self.bandit_returns = bandit_returns
         self.n_bandits = len(bandit_returns)
         self.bandits = list(range(self.n_bandits))
@@ -20,10 +44,18 @@ class RunSplitTest:
         self.df_clicks = pd.DataFrame(columns=self.bandit_returns)
  
     def init_bandits(self):
+        """
+        Prepares everything for new simulation.
+        """
+
         self.bandit_positive_examples = [0] * self.n_bandits
         self.bandit_total_examples = [0] * self.n_bandits
     
     def run(self):
+        """
+        Runs the simulations and tracks performance.
+        """
+
         for j in range(self.simulations):
             self.init_bandits()
             for i in range(self.batches):
