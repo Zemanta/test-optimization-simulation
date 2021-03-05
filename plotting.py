@@ -6,6 +6,23 @@ from epsilon import RunEpsilonGreedy
 from thompson import RunThompsonSampling
 
 
+def line_plot(df: pd.DataFrame, title:str, x_label: str, y_label: str):
+    """
+    Plots a line plot of the passed DataFrame.
+
+    Args:
+        df: DataFrame containing data to be plotted.
+        title: Title of the plot.
+        x_label: Title of the x-axis.
+        y_label: Title of the y-axis.
+    """
+    stacked_data = df.apply(lambda x: x*100/sum(x), axis=1)
+    stacked_data.plot(kind="line", stacked=True)
+    plt.title(title)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+
+
 def stacked_plot(df: pd.DataFrame, title:str, x_label: str, y_label: str):
     """
     Plots a stacked area plot of the passed DataFrame.
@@ -21,6 +38,31 @@ def stacked_plot(df: pd.DataFrame, title:str, x_label: str, y_label: str):
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
+
+
+def plot_line_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSampling):
+    """
+    Plots a line plots for each type of test.
+
+    Args:
+        rst: Split test simulation class.
+        reg: Epsilon-greedy MAB test simulation class.
+        rts: Thompson sampling test simulation class.
+    """
+    line_plot(rst.df_bids,
+              title='A/B Test Bandit Resources Allocation',
+              x_label='Batch',
+              y_label='Bandit Allocation (%)')
+
+    line_plot(reg.df_bids,
+              title='Epsilon Greedy Bandit Resources Allocation',
+              x_label='Batch',
+              y_label='Bandit Allocation (%)')
+
+    line_plot(rts.df_bids,
+              title='Thompson Sampling Bandit Resources Allocation',
+              x_label='Batch',
+              y_label='Bandit Allocation (%)')
 
 
 def plot_stacked_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSampling):

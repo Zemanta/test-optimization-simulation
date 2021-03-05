@@ -153,8 +153,9 @@ class RunEpsilonGreedy:
                     exploration_examples = self.batch_size // self.n_bandits
                 for idx in self.bandits:
                     self.bandit_total_examples[idx] += exploration_examples
-                    self.bandit_positive_examples[idx] += np.random.binomial(exploration_examples, self.bandit_returns[idx])
-                    self.eps.update_bandit(idx, self.bandit_positive_examples[idx])
+                    positive_examples = np.random.binomial(exploration_examples, self.bandit_returns[idx])
+                    self.bandit_positive_examples[idx] += positive_examples
+                    self.eps.update_bandit(idx, positive_examples)
                 
                 exploitation_examples = self.batch_size - exploration_examples * self.n_bandits
                 self.bandit_total_examples[best_bandit] += exploitation_examples

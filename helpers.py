@@ -7,7 +7,7 @@ from scipy import stats
 from split import RunSplitTest
 from epsilon import RunEpsilonGreedy
 from thompson import RunThompsonSampling
-from plotting import plot_stacked_plots, plot_gain
+from plotting import plot_stacked_plots, plot_line_plots, plot_gain, stacked_plot
 
 def z_calc(p1: float, p2: float, n1: int, n2: int) -> float:
     """
@@ -99,10 +99,7 @@ def get_number_batches(examples_needed: int, batch_size: int) -> int:
     return math.ceil(examples_needed / batch_size)
 
 
-def simulate(bandits: List[float], alpha: float=0.001,
-             batch_size: int=5000, simulations: int=1000,
-             epsilon: float=0.1, sample_size: int=1000) ->
-             (RunSplitTest, RunEpsilonGreedy, RunThompsonSampling):
+def simulate(bandits: List[float], alpha: float=0.001, batch_size: int=5000, simulations: int=1000, epsilon: float=0.1, sample_size: int=1000) -> (RunSplitTest, RunEpsilonGreedy, RunThompsonSampling):
     """
     Runs simulations for split tests, Epsilon-greedy multi-armed bandits
     and Thompson sampling based on the provided parameters.
@@ -168,6 +165,10 @@ def run_simulations(bandits: List[float], alpha: float=0.001, batch_size: int=10
     plot_stacked_plots(rst=rst,
                        reg=reg,
                        rts=rts)
+
+    plot_line_plots(rst=rst,
+                    reg=reg,
+                    rts=rts)
 
     plot_gain(rst=rst,
               reg=reg,
