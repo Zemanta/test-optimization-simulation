@@ -1,9 +1,9 @@
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from split import RunSplitTest
-from epsilon import RunEpsilonGreedy
-from thompson import RunThompsonSampling
+from features.algorithms.split import SplitTestRunner
+from features.algorithms.epsilon import EpsilonGreedyRunner
+from features.algorithms.thompson import ThompsonSamplingRunner
 
 
 def line_plot(df: pd.DataFrame, title:str, x_label: str, y_label: str):
@@ -34,13 +34,13 @@ def stacked_plot(df: pd.DataFrame, title:str, x_label: str, y_label: str):
         y_label: Title of the y-axis.
     """
     stacked_data = df.apply(lambda x: x*100/sum(x), axis=1)
-    stacked_data.plot(kind="area", stacked=True)
+    stacked_data.plot(kind="area", stacked=True, figsize=(12,6))
     plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
 
 
-def plot_line_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSampling):
+def plot_line_plots(rst: SplitTestRunner, reg: EpsilonGreedyRunner, rts: ThompsonSamplingRunner):
     """
     Plots a line plots for each type of test.
 
@@ -65,7 +65,7 @@ def plot_line_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSa
               y_label='Bandit Allocation (%)')
 
 
-def plot_stacked_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSampling):
+def plot_stacked_plots(rst: SplitTestRunner, reg: EpsilonGreedyRunner, rts: ThompsonSamplingRunner):
     """
     Plots a stacked area plots for each type of test.
 
@@ -90,7 +90,7 @@ def plot_stacked_plots(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompso
                 y_label='Bandit Allocation (%)')
 
 
-def plot_gain(rst: RunSplitTest, reg: RunEpsilonGreedy, rts: RunThompsonSampling):
+def plot_gain(rst: SplitTestRunner, reg: EpsilonGreedyRunner, rts: ThompsonSamplingRunner):
     """
     Plots the returns of each kind of test over the batches it ran.
 

@@ -5,7 +5,7 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 
-from bandits import BetaBandit
+from features.algorithms.bandits import BetaBandit
 
 
 class WeightedChoiceFailed(Exception):
@@ -135,7 +135,7 @@ class ThompsonSampling:
         return dict(counter)
 
 
-class RunThompsonSampling:
+class ThompsonSamplingRunner:
     """
     Class that is used to run simulations of Thompson sampling tests.
 
@@ -206,7 +206,7 @@ class RunThompsonSampling:
                 for key, val in self.thomsam.bandit_batch().items():
                     self.bandit_total_examples[key] += val
                     self.bandit_positive_examples[key] += np.random.binomial(val, self.bandit_returns[key])
-                    self.thomsam.update_bandit(key, self.bandit_positive_examples[key], self.bandit_total_examples[key]- self.bandit_positive_examples[key])
+                    self.thomsam.update_bandit(key, self.bandit_positive_examples[key], self.bandit_total_examples[key] - self.bandit_positive_examples[key])
                 if self.df_bids.shape[0] < self.batches:
                         self.df_bids.loc[i] = self.bandit_total_examples
                         self.df_clicks.loc[i] = self.bandit_positive_examples

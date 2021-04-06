@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 
-class RunSplitTest:
+class SplitTestRunner:
     """
     Class that is used to run simulations of split tests.
 

@@ -4,10 +4,10 @@ from typing import List
 import pandas as pd
 from scipy import stats
 
-from split import RunSplitTest
-from epsilon import RunEpsilonGreedy
-from thompson import RunThompsonSampling
-from plotting import plot_stacked_plots, plot_line_plots, plot_gain, stacked_plot
+from features.algorithms.split import SplitTestRunner
+from features.algorithms.epsilon import EpsilonGreedyRunner
+from features.algorithms.thompson import ThompsonSamplingRunner
+from features.plotting import plot_stacked_plots, plot_gain, stacked_plot
 
 def z_calc(p1: float, p2: float, n1: int, n2: int) -> float:
     """
@@ -99,7 +99,7 @@ def get_number_batches(examples_needed: int, batch_size: int) -> int:
     return math.ceil(examples_needed / batch_size)
 
 
-def simulate(bandits: List[float], alpha: float=0.001, batch_size: int=5000, simulations: int=1000, epsilon: float=0.1, sample_size: int=1000) -> (RunSplitTest, RunEpsilonGreedy, RunThompsonSampling):
+def simulate(bandits: List[float], alpha: float=0.001, batch_size: int=5000, simulations: int=1000, epsilon: float=0.1, sample_size: int=1000) -> (SplitTestRunner, EpsilonGreedyRunner, ThompsonSamplingRunner):
     """
     Runs simulations for split tests, Epsilon-greedy multi-armed bandits
     and Thompson sampling based on the provided parameters.
@@ -117,25 +117,25 @@ def simulate(bandits: List[float], alpha: float=0.001, batch_size: int=5000, sim
     examples_needed = get_minimum_sample(bandits, alpha)
     batches = get_number_batches(examples_needed, batch_size)
 
-    rst = RunSplitTest(bandits,
-                       batch_size=batch_size,
-                       batches=batches,
-                       simulations=simulations)
+    rst = SplitTestRunner(bandits,
+                          batch_size=batch_size,
+                          batches=batches,
+                          simulations=simulations)
 
-    reg = RunEpsilonGreedy(bandits,
-                           epsilon=epsilon, 
-                           batch_size=batch_size,
-                           batches=batches,
-                           simulations=simulations)
-
-    rts = RunThompsonSampling(bandits,
-                              alpha_priors=None,
-                              beta_priors=None,
-                              sample_size=sample_size,
+    reg = EpsilonGreedyRunner(bandits,
+                              epsilon=epsilon, 
                               batch_size=batch_size,
                               batches=batches,
                               simulations=simulations)
-    
+
+    rts = ThompsonSamplingRunner(bandits,
+                                 alpha_priors=None,
+                                 beta_priors=None,
+                                 sample_size=sample_size,
+                                 batch_size=batch_size,
+                                 batches=batches,
+                                 simulations=simulations)
+
     rst.run()
     reg.run()
     rts.run()
@@ -166,10 +166,26 @@ def run_simulations(bandits: List[float], alpha: float=0.001, batch_size: int=10
                        reg=reg,
                        rts=rts)
 
-    plot_line_plots(rst=rst,
-                    reg=reg,
-                    rts=rts)
-
     plot_gain(rst=rst,
               reg=reg,
               rts=rts)
+
+
+def simulate_ts(bandits: List[float], alpha_priors: List[float], beta_priors: List[float], batch_size: int=5000, simulations: int=1000, sample_size: int=1000):
+    batches = 700
+
+    rts = RunThompsonSampling(bandits,
+                              alpha_priors=None,
+                              beta_priors=None,
+                              sample_size=sample_size,
+                              batch_size=batch_size,
+                              batches=batches,
+                              simulations=simulations)
+    
+    rts.run()
+    
+    stacked_plot(rts.df_bids,
+                 title='Thompson Sampling Resources Allocation',
+                 x_label='Batch',
+                 y_label='Bandit Allocation (%)')
+    return rts.df_bids, rts.df_clicks

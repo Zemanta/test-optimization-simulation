@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 import pandas as pd
 
-from bandits import EpsilonBandit
+from features.algorithms.bandits import EpsilonBandit
 
 
 class EpsilonGreedy:
@@ -87,7 +87,7 @@ class EpsilonGreedy:
         return exploration, self.best_bandits[-1]
 
 
-class RunEpsilonGreedy:
+class EpsilonGreedyRunner:
     """
     Class that is used to run simulations of Thompson sampling tests.
 
