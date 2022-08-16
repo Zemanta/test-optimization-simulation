@@ -1,6 +1,6 @@
 # Test Optimization Simulation
 
-This is a repo that is accompanying this blog post (TODO: add link) and a couple of conference talks on the same topic.
+This is a repo that is accompanying this [blog post](https://medium.com/outbrain-engineering/methods-for-effective-online-testing-in-real-time-bidding-fe11ddcdd63) and a couple of conference talks on the same topic.
 
 TLDR: This code is used to simulate and show the differences between A/B tests and optimizing test groups using multi-armed bandit methods.
 
